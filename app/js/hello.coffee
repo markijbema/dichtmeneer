@@ -8,7 +8,7 @@ name = rx.cell("Unknown")
 window.hello = ->
   $('body').append(
     div [
-      input_val = input change: -> name.set(@val())
+      input keyup: -> name.set(@val())
       div {class: 'hello'}, bind -> "Hello #{name.get()}"
     ]
   )
