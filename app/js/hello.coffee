@@ -3,11 +3,14 @@ rxt.importTags()
 _.mixin(_.str.exports())
 
 
-window.helloText = -> 'Hello, World!'
+name = rx.cell("Unknown")
 
 window.hello = ->
   $('body').append(
-    div {class: 'hello'}, helloText()
+    div [
+      input_val = input change: -> name.set(@val())
+      div {class: 'hello'}, bind -> "Hello #{name.get()}"
+    ]
   )
 
 if window.addEventListener
