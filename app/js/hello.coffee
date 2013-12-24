@@ -3,13 +3,18 @@ rxt.importTags()
 _.mixin(_.str.exports())
 
 
-name = rx.cell("Unknown")
+gedicht = rx.cell("gerrit is een baas")
+last_word = bind -> _.last(gedicht.get().trim().split(" "))
+rhyme_words = rx.array(['haas', 'gaas', 'sinterklaas'])
 
 window.hello = ->
   $('body').append(
     div [
-      input keyup: -> name.set(@val())
-      div {class: 'hello'}, bind -> "Hello #{name.get()}"
+      textarea { keyup: -> gedicht.set(@val())},
+        bind -> gedicht.get()
+      div bind -> "Rijmwoorden voor: #{last_word.get()}"
+      ul rhyme_words.map (rhyme_word) ->
+        li rhyme_word
     ]
   )
 
