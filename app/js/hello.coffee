@@ -35,7 +35,7 @@ updateGedicht = ->
   gedicht.set(@val())
   currentLine.set(@val().substr(0, @prop("selectionStart")).split("\n").length)
 
-window.hello = ->
+$ ->
   $('body').append(
     div [
       textarea { rows: 10, keyup: _.debounce(updateGedicht, 50)},
@@ -54,8 +54,3 @@ window.hello = ->
         li rhyme_word
     ]
   )
-
-if window.addEventListener
-  window.addEventListener('DOMContentLoaded', hello, false)
-else
-  window.attachEvent('onload', hello)
