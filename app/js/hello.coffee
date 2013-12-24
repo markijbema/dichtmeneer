@@ -4,22 +4,50 @@ _.mixin(_.str.exports())
 
 window.dictionary ?= {}
 
-gedicht = rx.cell("gerrit is een baas")
-last_word = bind -> _.last(gedicht.get().trim().split(" "))
-word_end = bind -> last_word.get().replace(/^.*?([aoeui]+[^aoeui]*(?:|ie|ige|ig|el|ers|eren|ere|eerden|eerde|heid|es|ingen|ing|er|e|en))$/, "$1")
-window.rhyme_words = rx.array([])
 
+class Line
+  constructor: (line, @linenumber) ->
+    @line = line.trim()
+
+  lastWord: ->
+    _.last(@line.split(" "))
+
+  rhymeEnd: ->
+    @lastWord().replace(/^.*?([aoeui]+[^aoeui]*(?:|ie|ige|ig|el|ers|eren|ere|eerden|eerde|heid|es|ingen|ing|er|e|en))$/, "$1")
+
+
+gedicht     = rx.cell("gerrit is een baas\neen baas is een paashaas")
+lines       = rx.array([])
+rhyme_words = rx.array([])
+currentLine = rx.cell()
+
+gedicht.onSet.sub ([oldval, newval]) ->
+  i = 1
+  lines.replace _.map newval.trim().split("\n"),
+      (line) -> new Line(line, i++)
+
+word_end    = bind -> lines.at(currentLine.get()-1)?.rhymeEnd()
 word_end.onSet.sub ([oldval, newval]) ->
   rhyme_words.replace(window.dictionary[newval] or [])
+
+
+updateGedicht = ->
+  gedicht.set(@val())
+  currentLine.set(@val().substr(0, @prop("selectionStart")).split("\n").length)
 
 window.hello = ->
   $('body').append(
     div [
-      textarea { rows: 10, keyup: _.debounce((-> gedicht.set(@val())), 50)},
+      textarea { rows: 10, keyup: _.debounce(updateGedicht, 50)},
         bind -> gedicht.get()
+      table lines.map (line) ->
+        tr {class: bind -> if line.linenumber == currentLine.get() then "current" else ""}, [
+          td line.line
+          td line.lastWord()
+          td line.rhymeEnd()
+        ]
       div bind -> [
         "Rijmwoorden voor: "
-        strong last_word.get()
         " met rijmuitgang: #{word_end.get()}"
       ]
       ul rhyme_words.map (rhyme_word) ->
