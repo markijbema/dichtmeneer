@@ -1,8 +1,14 @@
+bind = rx.bind
+rxt.importTags()
+_.mixin(_.str.exports())
+
+
 window.helloText = -> 'Hello, World!'
 
 window.hello = ->
-  html = JST['app/templates/hello.us'](text: helloText())
-  document.body.innerHTML += html
+  $('body').append(
+    div {class: 'hello'}, helloText()
+  )
 
 if window.addEventListener
   window.addEventListener('DOMContentLoaded', hello, false)
