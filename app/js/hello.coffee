@@ -38,8 +38,7 @@ updateGedicht = ->
 $ ->
   $('body').append(
     div [
-      textarea { rows: 10, keyup: _.debounce(updateGedicht, 50)},
-        bind -> gedicht.get()
+      textarea { rows: 10, keyup: _.debounce(updateGedicht, 50)}, gedicht
       table lines.map (line) ->
         tr {class: bind -> if line.linenumber == currentLine.get() then "current" else ""}, [
           td line.line
